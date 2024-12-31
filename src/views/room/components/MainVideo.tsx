@@ -4,12 +4,12 @@ import { LivekitContext } from "./LivekitContext";
 import { Avatar } from "./Avatar";
 import { UserName } from "./UserName";
 import clsx from "clsx";
+import { RemoteTrackPublication, VideoQuality } from "livekit-client";
 
 export const MainVideo: React.FC = () => {
   const { livekit } = useContext(LivekitContext);
   const { mainUser } = livekit;
   useEffect(() => {
-    console.log(mainUser);
     if (!mainUser) return;
 
     const video = document.getElementById("main_video") as HTMLVideoElement;
@@ -18,6 +18,11 @@ export const MainVideo: React.FC = () => {
     const screen = document.getElementById("main_screen") as HTMLVideoElement;
 
     if (video && mainUser.traks?.camera) {
+      if (!mainUser.isMy) {
+        (mainUser.traks.camera as RemoteTrackPublication).setVideoQuality(
+          VideoQuality.HIGH
+        );
+      }
       mainUser.traks.camera.track?.attach(video);
     }
 

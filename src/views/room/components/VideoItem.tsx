@@ -3,6 +3,7 @@ import { Voice } from "./Voice";
 import { User } from "@/hooks/useLiveKit";
 import { Avatar } from "./Avatar";
 import { UserName } from "./UserName";
+import { RemoteTrackPublication, VideoQuality } from "livekit-client";
 interface Props {
   item: User;
 }
@@ -18,6 +19,11 @@ export const VideoItem: React.FC<Props> = ({ item }) => {
     ) as HTMLAudioElement;
 
     if (video && item.traks?.camera) {
+      if (!item.isMy) {
+        (item.traks.camera as RemoteTrackPublication).setVideoQuality(
+          VideoQuality.LOW
+        );
+      }
       item.traks.camera.track?.attach(video);
     }
 
