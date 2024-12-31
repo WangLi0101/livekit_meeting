@@ -139,6 +139,7 @@ export const useLiveKit = () => {
     }
     arr.push(myItem);
     setMy(myItem);
+
     // 其他人的信息
     const remoteParticipants = room.current.remoteParticipants;
     for (const [key, value] of remoteParticipants) {
@@ -157,10 +158,19 @@ export const useLiveKit = () => {
       arr.push(item);
     }
     setUserList(arr);
-    if (!mainUser && arr.length) {
-      setMainUser(arr[0]);
-    }
   };
+
+  useEffect(() => {
+    if (!userList.length) return;
+    if (!mainUser) {
+      setMainUser(userList[0]);
+    } else {
+      const user = userList.find((item) => item.name === mainUser?.name);
+      if (user) {
+        setMainUser(user);
+      }
+    }
+  }, [userList]);
 
   // 监听
   const startListen = () => {

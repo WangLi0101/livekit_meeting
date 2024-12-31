@@ -8,8 +8,6 @@ interface Props {
 }
 export const VideoItem: React.FC<Props> = ({ item }) => {
   useEffect(() => {
-    console.log(item);
-
     if (!item.name) return;
     const video = document.getElementById(
       `${item.name}_video`
