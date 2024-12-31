@@ -9,7 +9,7 @@ export const MainVideo: React.FC = () => {
   const { livekit } = useContext(LivekitContext);
   const { mainUser } = livekit;
   useEffect(() => {
-    // console.log(mainUser);
+    console.log(mainUser);
     if (!mainUser) return;
 
     const video = document.getElementById("main_video") as HTMLVideoElement;
@@ -36,9 +36,11 @@ export const MainVideo: React.FC = () => {
         <div className="video h-full">
           <video
             id="main_video"
-            className={clsx("w-full h-full right-0 top-0", {
+            className={clsx("right-0 top-0", {
               absolute: mainUser?.traks.screen_share,
               "w-1/3 h-1/3": mainUser?.traks.screen_share,
+              "w-full h-full": !mainUser?.traks.screen_share,
+              relative: !mainUser?.traks.screen_share,
             })}
           />
           <video id="main_screen" className="w-full h-full"></video>

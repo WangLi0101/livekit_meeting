@@ -199,6 +199,10 @@ export const useLiveKit = () => {
     room.current.on(RoomEvent.LocalTrackUnpublished, () => {
       getParticipants();
     });
+
+    room.current.on(RoomEvent.TrackUnpublished, () => {
+      getParticipants();
+    });
   };
 
   // 声音控制(自己)
