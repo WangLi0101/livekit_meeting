@@ -20,6 +20,8 @@ export const Control: React.FC = () => {
     setMic,
     closeVideo,
     createCameraTrack,
+    createScreenTrack,
+    closeScreen,
     my,
     currentCamera,
   } = livekit;
@@ -32,6 +34,13 @@ export const Control: React.FC = () => {
       closeVideo();
     } else {
       createCameraTrack(currentCamera);
+    }
+  };
+  const handleScreen = () => {
+    if (my?.traks.screen_share) {
+      closeScreen();
+    } else {
+      createScreenTrack();
     }
   };
   return (
@@ -76,7 +85,7 @@ export const Control: React.FC = () => {
           </SelectContent>
         </Select>
       </div>
-      <Screen />
+      <Screen isClose={!my?.traks.screen_share} onClick={handleScreen} />
     </div>
   );
 };

@@ -225,7 +225,13 @@ export const useLiveKit = () => {
     await room.current?.localParticipant.unpublishTrack(cameraTrack.current);
     cameraTrack.current = void 0;
   };
-
+  // 关闭屏幕
+  const closeScreen = async () => {
+    if (!screenTrack.current) return;
+    screenTrack.current.stop();
+    await room.current?.localParticipant.unpublishTrack(screenTrack.current);
+    screenTrack.current = void 0;
+  };
   // 更换摄像头
   const setCamera = async (deviceId: string) => {
     if (!cameraTrack.current) return;
@@ -270,5 +276,6 @@ export const useLiveKit = () => {
     startListen,
     mutedRemoteHandler,
     createScreenTrack,
+    closeScreen,
   };
 };

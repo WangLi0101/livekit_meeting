@@ -15,7 +15,6 @@ const Room: React.FC = () => {
     createCameraTrack,
     createAudioTrack,
     startListen,
-    createScreenTrack,
     currentCamera,
     currentMic,
   } = livekit;
@@ -30,7 +29,6 @@ const Room: React.FC = () => {
       await connect(livekit_url, token);
       createCameraTrack(currentCamera);
       createAudioTrack(currentMic);
-      createScreenTrack();
     }
   };
 
