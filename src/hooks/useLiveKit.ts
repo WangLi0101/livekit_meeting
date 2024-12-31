@@ -183,7 +183,7 @@ export const useLiveKit = () => {
     });
   };
 
-  // 静音
+  // 静音(自己)
   const mutedLocalHandler = (isMuted: boolean) => {
     if (audioTrack.current) {
       if (isMuted) {

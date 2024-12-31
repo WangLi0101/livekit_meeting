@@ -20,8 +20,11 @@ export const Voice: React.FC<Props> = ({ className, isMuted, disabled }) => {
       )}
     >
       <Icon
-        icon={isMuted ? "system-uicons:microphone-muted" : "mdi:microphone"}
-        fontSize={24}
+        icon={isMuted ? "streamline:voice-mail-off-solid" : "mdi:microphone"}
+        fontSize={isMuted ? 16 : 24}
+        className={clsx({
+          "text-white": isMuted,
+        })}
       />
     </div>
   );
