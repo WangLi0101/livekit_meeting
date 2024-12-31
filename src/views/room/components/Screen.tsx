@@ -7,7 +7,7 @@ interface Props {
   disabled?: boolean;
   onClick?: () => void;
 }
-export const Video: React.FC<Props> = ({
+export const Screen: React.FC<Props> = ({
   className,
   isClose,
   disabled,
@@ -29,8 +29,8 @@ export const Video: React.FC<Props> = ({
       <Icon
         icon={
           isClose
-            ? "material-symbols:video-camera-front-off-outline"
-            : "material-symbols:videocam-outline"
+            ? "material-symbols:stop-screen-share-outline"
+            : "material-symbols:screen-share-outline"
         }
         fontSize={24}
         className={clsx({

@@ -5,21 +5,39 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-// import { Icon } from "@iconify/react";
-// import clsx from "clsx";
+
 import React, { useContext } from "react";
 import { LivekitContext } from "./LivekitContext";
-import { Button } from "@/components/ui/button";
+import { Voice } from "./Voice";
+import { Video } from "./Video";
+import { Screen } from "./Screen";
 
 export const Control: React.FC = () => {
   const { livekit } = useContext(LivekitContext);
-  const { mutedLocalHandler, setCamera, setMic, closeVideo } = livekit;
-  const mutedHandler = () => {
-    mutedLocalHandler(true);
+  const {
+    mutedLocalHandler,
+    setCamera,
+    setMic,
+    closeVideo,
+    createCameraTrack,
+    my,
+    currentCamera,
+  } = livekit;
+  const handleMuted = () => {
+    mutedLocalHandler(!my?.isMuted);
+  };
+
+  const handleVideo = () => {
+    if (my?.traks.camera) {
+      closeVideo();
+    } else {
+      createCameraTrack(currentCamera);
+    }
   };
   return (
-    <div className="px-4 flex items-cente gap-4">
-      <div className="video">
+    <div className="px-4 flex items-cente gap-4 justify-center">
+      <div className="video flex items-center gap-2">
+        <Video isClose={!my?.traks.camera} onClick={handleVideo} />
         <Select
           value={livekit.currentCamera}
           onValueChange={(value) => {
@@ -38,7 +56,8 @@ export const Control: React.FC = () => {
           </SelectContent>
         </Select>
       </div>
-      <div className="audio">
+      <div className="flex items-center gap-2">
+        <Voice isMuted={my?.isMuted} onClick={handleMuted} />
         <Select
           value={livekit.currentMic}
           onValueChange={(value) => {
@@ -57,27 +76,7 @@ export const Control: React.FC = () => {
           </SelectContent>
         </Select>
       </div>
-      {/* <div className="screen">
-        <div
-          className={clsx(
-            "rounded-full bg-emerald-50 flex items-center justify-center p-3",
-            {
-              "bg-[rgba(241,154,146,.3)]": isScreen,
-            }
-          )}
-        >
-          <Icon
-            icon={
-              isScreen
-                ? "material-symbols:stop-screen-share-outline-rounded"
-                : "material-symbols:screen-share-outline"
-            }
-            fontSize={24}
-          />
-        </div>
-      </div> */}
-      <Button onClick={mutedHandler}>静音</Button>
-      <Button onClick={closeVideo}>关闭视频</Button>
+      <Screen />
     </div>
   );
 };

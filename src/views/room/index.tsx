@@ -15,6 +15,7 @@ const Room: React.FC = () => {
     createCameraTrack,
     createAudioTrack,
     startListen,
+    createScreenTrack,
     currentCamera,
     currentMic,
   } = livekit;
@@ -29,6 +30,7 @@ const Room: React.FC = () => {
       await connect(livekit_url, token);
       createCameraTrack(currentCamera);
       createAudioTrack(currentMic);
+      createScreenTrack();
     }
   };
 
@@ -41,14 +43,14 @@ const Room: React.FC = () => {
   return (
     <LivekitContext.Provider value={{ livekit }}>
       <div className="room flex p-2 h-screen bg-[#e6e9ec]">
-        <div className="left flex-1 h-full flex flex-col gap-3 bg-white p-4 rounded-md">
+        <div className="left flex-1 h-full flex flex-col gap-4 bg-white p-4 rounded-md">
           <h2 className="title text-2xl font-bold flex-shrink-0">
             roomNumber:{livekit.roomInfo?.name}
           </h2>
           <div className="video-content mt-4 flex-1 overflow-hidden">
             <MainVideo />
           </div>
-          <div className="list h-[30%] px-9 flex-shrink-0">
+          <div className="list  px-9 flex-shrink-0">
             <VideoList />
           </div>
           <div className="control flex-shrink-0">

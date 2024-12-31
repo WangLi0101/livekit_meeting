@@ -5,7 +5,7 @@ import { LivekitContext } from "./LivekitContext";
 
 export const UserList: React.FC = () => {
   const { livekit } = useContext(LivekitContext);
-  const { userList } = livekit;
+  const { userList, mutedRemoteHandler } = livekit;
   return (
     <div className="h-full flex flex-col">
       <div className="title">
@@ -22,7 +22,15 @@ export const UserList: React.FC = () => {
               <p className="name">{item.name}</p>
             </div>
             <div className="right flex items-center gap-2">
-              <Voice isMuted={item.isMuted} />
+              {!item.isMy && (
+                <Voice
+                  isMuted={item.isMuted}
+                  disabled={!item.traks.microphone}
+                  onClick={() => {
+                    mutedRemoteHandler(!item.isMuted, item.name);
+                  }}
+                />
+              )}
             </div>
           </div>
         ))}

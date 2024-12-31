@@ -2,12 +2,12 @@ import { useEffect, useRef, useState } from "react";
 import {
   ConnectionState,
   createLocalAudioTrack,
+  createLocalScreenTracks,
   createLocalVideoTrack,
   LocalAudioTrack,
+  LocalTrack,
   LocalTrackPublication,
   LocalVideoTrack,
-  RemoteParticipant,
-  RemoteTrack,
   RemoteTrackPublication,
   Room,
   RoomEvent,
@@ -17,7 +17,7 @@ import { useImmer } from "use-immer";
 export interface User {
   name: string;
   traks: Partial<
-    Record<Track.Kind, RemoteTrackPublication | LocalTrackPublication>
+    Record<Track.Source, RemoteTrackPublication | LocalTrackPublication>
   >;
   isMuted: boolean;
   isMy: boolean;
@@ -31,6 +31,7 @@ export const useLiveKit = () => {
   const [roomInfo, setRoomInfo] = useState<Room>();
   const [userList, setUserList] = useImmer<User[]>([]);
   const [mainUser, setMainUser] = useState<User>();
+  const [my, setMy] = useState<User>();
   useEffect(() => {
     room.current = new Room();
   }, []);
@@ -82,6 +83,8 @@ export const useLiveKit = () => {
   const cameraTrack = useRef<LocalVideoTrack>();
   // 音频轨道
   const audioTrack = useRef<LocalAudioTrack>();
+  // 屏幕轨道
+  const screenTrack = useRef<LocalTrack>();
   // 创建摄像头轨道
   const createCameraTrack = async (deviceId: string) => {
     const track = await createLocalVideoTrack({
@@ -99,33 +102,45 @@ export const useLiveKit = () => {
     publishTrack(audioTrack.current);
   };
 
+  // 创建屏幕轨道
+  const createScreenTrack = async () => {
+    const track = await createLocalScreenTracks({
+      audio: false,
+    });
+    screenTrack.current = track[0];
+    publishTrack(screenTrack.current);
+  };
+
   // 发布轨道
-  const publishTrack = async (track: LocalVideoTrack | LocalAudioTrack) => {
+  const publishTrack = async (
+    track: LocalVideoTrack | LocalAudioTrack | LocalTrack
+  ) => {
     await room.current?.localParticipant.publishTrack(track);
   };
   // 获取所有参与者
   const getParticipants = () => {
     if (!room.current) return;
     const arr = [];
-    const remoteParticipants = room.current.remoteParticipants;
+
     // 自己的信息
     const myName = room.current.localParticipant.identity;
     const localParticipant = room.current.localParticipant.trackPublications;
     const myItem: User = {
       name: myName,
-      traks: {} as Partial<Record<Track.Kind, RemoteTrackPublication>>,
+      traks: {} as Partial<Record<Track.Source, RemoteTrackPublication>>,
       isMuted: false,
       isMy: true,
     };
     for (const [_rkey, rvalue] of localParticipant) {
-      myItem.traks[rvalue.kind] = rvalue;
+      myItem.traks[rvalue.source] = rvalue;
       if (rvalue.kind === Track.Kind.Audio) {
         myItem.isMuted = rvalue.isMuted;
       }
     }
     arr.push(myItem);
-
+    setMy(myItem);
     // 其他人的信息
+    const remoteParticipants = room.current.remoteParticipants;
     for (const [key, value] of remoteParticipants) {
       const item: User = {
         name: key,
@@ -134,8 +149,8 @@ export const useLiveKit = () => {
         isMy: false,
       };
       for (const [_rkey, rvalue] of value.trackPublications) {
-        item.traks[rvalue.kind] = rvalue;
-        if (rvalue.kind === Track.Kind.Audio) {
+        item.traks[rvalue.source] = rvalue;
+        if (rvalue.source === Track.Source.Microphone) {
           item.isMuted = rvalue.isMuted;
         }
       }
@@ -150,18 +165,11 @@ export const useLiveKit = () => {
   // 监听
   const startListen = () => {
     if (!room.current) return;
-    room.current?.on(
-      RoomEvent.TrackSubscribed,
-      (
-        _track: RemoteTrack,
-        _publication: RemoteTrackPublication,
-        _participant: RemoteParticipant
-      ) => {
-        getParticipants();
-      }
-    );
+    room.current?.on(RoomEvent.TrackSubscribed, () => {
+      getParticipants();
+    });
     room.current.on(RoomEvent.Connected, () => {
-      console.log("连接成功");
+      console.log("连接成功", room.current);
       getParticipants();
       setRoomInfo(room.current);
     });
@@ -183,7 +191,7 @@ export const useLiveKit = () => {
     });
   };
 
-  // 静音(自己)
+  // 声音控制(自己)
   const mutedLocalHandler = (isMuted: boolean) => {
     if (audioTrack.current) {
       if (isMuted) {
@@ -194,24 +202,44 @@ export const useLiveKit = () => {
     }
   };
 
+  // 声音控制他人
+  const mutedRemoteHandler = (isMuted: boolean, name: string) => {
+    setUserList((draft) => {
+      const user = draft.find((item) => item.name === name);
+      if (!user || !user.traks.microphone) {
+        return;
+      }
+      if (isMuted) {
+        user.traks.microphone.handleMuted();
+        user.isMuted = true;
+      } else {
+        user.traks.microphone.handleUnmuted();
+        user.isMuted = false;
+      }
+    });
+  };
   // 关闭视频
   const closeVideo = async () => {
     if (!cameraTrack.current) return;
     cameraTrack.current.stop();
     await room.current?.localParticipant.unpublishTrack(cameraTrack.current);
+    cameraTrack.current = void 0;
   };
 
   // 更换摄像头
   const setCamera = async (deviceId: string) => {
     if (!cameraTrack.current) return;
     cameraTrack.current.setDeviceId(deviceId);
+    setCurrentCamera(deviceId);
   };
 
   // 更换麦克风
   const setMic = async (deviceId: string) => {
     if (!audioTrack.current) return;
     audioTrack.current.setDeviceId(deviceId);
+    setCurrentMic(deviceId);
   };
+
   return {
     room,
     cameraTrack,
@@ -223,7 +251,7 @@ export const useLiveKit = () => {
     currentMic,
     userList,
     mainUser,
-
+    my,
     // action
     connect,
     disconnect,
@@ -240,5 +268,7 @@ export const useLiveKit = () => {
     setCurrentCamera,
     setCurrentMic,
     startListen,
+    mutedRemoteHandler,
+    createScreenTrack,
   };
 };
