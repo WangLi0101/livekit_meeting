@@ -41,14 +41,14 @@ export const MainVideo: React.FC = () => {
         <div className="video h-full">
           <video
             id="main_video"
-            className={clsx("right-0 top-0", {
+            className={clsx("right-0 top-0 bg-black", {
               absolute: mainUser?.traks.screen_share,
               "w-1/3 h-1/3": mainUser?.traks.screen_share,
               "w-full h-full": !mainUser?.traks.screen_share,
               relative: !mainUser?.traks.screen_share,
             })}
           />
-          <video id="main_screen" className="w-full h-full"></video>
+          <video id="main_screen" className="w-full h-full bg-black"></video>
         </div>
       ) : (
         <div className="flex items-center justify-center h-full">

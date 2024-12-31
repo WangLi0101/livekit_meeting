@@ -35,7 +35,7 @@ export const VideoItem: React.FC<Props> = ({ item }) => {
     <div className="w-full h-full border-2 border-[#4a9582] rounded-lg relative">
       {item.traks.camera ? (
         <div className="video h-full">
-          <video id={`${item.name}_video`} className="w-full h-full" />
+          <video id={`${item.name}_video`} className="w-full h-full bg-black" />
         </div>
       ) : (
         <div className="flex items-center justify-center h-full">
