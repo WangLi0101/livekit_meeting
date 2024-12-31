@@ -1,6 +1,7 @@
 import React, { useContext, useEffect } from "react";
 import { Voice } from "./Voice";
 import { LivekitContext } from "./LivekitContext";
+import { Avatar } from "./Avatar";
 
 export const MainVideo: React.FC = () => {
   const { livekit } = useContext(LivekitContext);
@@ -23,10 +24,18 @@ export const MainVideo: React.FC = () => {
 
   return (
     <div className="w-full h-full border-2 border-[#4a9582] rounded-lg relative">
-      <div className="video h-full">
-        <video id="main_video" className="w-full h-full object-cover" />
-        <audio id="main_audio" className="hidden" />
-      </div>
+      {mainUser?.traks.video ? (
+        <div className="video h-full">
+          <video id="main_video" className="w-full h-full" />
+        </div>
+      ) : (
+        <div className="flex items-center justify-center h-full">
+          <Avatar className="w-[60px] h-[60px]">
+            {mainUser?.name?.slice(0, 1)}
+          </Avatar>
+        </div>
+      )}
+      <audio id="main_audio" className="hidden" />
       <div className="operator w-full flex justify-between items-center absolute bottom-0 left-0 p-4">
         <div className="inline-flex items-center px-4 py-2 bg-emerald-50 rounded-full shadow-sm border border-emerald-200">
           <span className="text-emerald-900 text-sm font-medium">
@@ -34,7 +43,7 @@ export const MainVideo: React.FC = () => {
           </span>
         </div>
         <div className="voice">
-          <Voice />
+          <Voice isMuted={mainUser?.isMuted} />
         </div>
       </div>
     </div>

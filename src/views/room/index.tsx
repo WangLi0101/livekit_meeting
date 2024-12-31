@@ -21,6 +21,7 @@ const Room: React.FC = () => {
 
   // 加入房间
   const joinRoom = async () => {
+    startListen();
     await livekit.getVideoDevices();
     await livekit.getAudioDevices();
     const token = window.sessionStorage.getItem("sign");
@@ -28,7 +29,6 @@ const Room: React.FC = () => {
       await connect(livekit_url, token);
       createCameraTrack(currentCamera);
       createAudioTrack(currentMic);
-      startListen();
     }
   };
 

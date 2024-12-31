@@ -4,6 +4,7 @@ import {
   createLocalAudioTrack,
   createLocalVideoTrack,
   LocalAudioTrack,
+  LocalTrackPublication,
   LocalVideoTrack,
   RemoteParticipant,
   RemoteTrack,
@@ -15,7 +16,11 @@ import {
 import { useImmer } from "use-immer";
 export interface User {
   name: string;
-  traks: Partial<Record<Track.Kind, RemoteTrackPublication>>;
+  traks: Partial<
+    Record<Track.Kind, RemoteTrackPublication | LocalTrackPublication>
+  >;
+  isMuted: boolean;
+  isMy: boolean;
 }
 export const useLiveKit = () => {
   const room = useRef<Room>();
@@ -32,9 +37,6 @@ export const useLiveKit = () => {
   // 连接
   const connect = async (url: string, token: string) => {
     await room.current?.connect(url, token);
-    setRoomInfo(room.current);
-    getParticipants();
-    console.log("链接成功", room.current);
   };
   // 断开链接
   const disconnect = async () => {
@@ -51,11 +53,13 @@ export const useLiveKit = () => {
 
       // 过滤出视频输入设备（摄像头）
       const videoDevices = devices.filter(
-        (device) => device.kind === "videoinput"
+        (device) => device.kind === "videoinput" && device.deviceId
       );
-
+      console.log("videoDevices", videoDevices);
       setCameraList(videoDevices);
-      setCurrentCamera(videoDevices[0].deviceId);
+      if (videoDevices.length > 0) {
+        setCurrentCamera(videoDevices[0].deviceId);
+      }
     } catch (error) {
       console.error("Error getting video devices:", error);
       return [];
@@ -66,10 +70,12 @@ export const useLiveKit = () => {
   async function getAudioDevices() {
     const devices = await navigator.mediaDevices.enumerateDevices();
     const audioDevices = devices.filter(
-      (device) => device.kind === "audioinput"
+      (device) => device.kind === "audioinput" && device.deviceId
     );
     setMicList(audioDevices);
-    setCurrentMic(audioDevices[0].deviceId);
+    if (audioDevices.length > 0) {
+      setCurrentMic(audioDevices[0].deviceId);
+    }
   }
 
   // 摄像头轨道
@@ -95,31 +101,55 @@ export const useLiveKit = () => {
 
   // 发布轨道
   const publishTrack = async (track: LocalVideoTrack | LocalAudioTrack) => {
-    const res = await room.current?.localParticipant.publishTrack(track);
-    console.log("res", res);
+    await room.current?.localParticipant.publishTrack(track);
   };
   // 获取所有参与者
   const getParticipants = () => {
     if (!room.current) return;
     const arr = [];
     const remoteParticipants = room.current.remoteParticipants;
+    // 自己的信息
+    const myName = room.current.localParticipant.identity;
+    const localParticipant = room.current.localParticipant.trackPublications;
+    const myItem: User = {
+      name: myName,
+      traks: {} as Partial<Record<Track.Kind, RemoteTrackPublication>>,
+      isMuted: false,
+      isMy: true,
+    };
+    for (const [_rkey, rvalue] of localParticipant) {
+      myItem.traks[rvalue.kind] = rvalue;
+      if (rvalue.kind === Track.Kind.Audio) {
+        myItem.isMuted = rvalue.isMuted;
+      }
+    }
+    arr.push(myItem);
+
+    // 其他人的信息
     for (const [key, value] of remoteParticipants) {
-      const item = {
+      const item: User = {
         name: key,
         traks: {} as Partial<Record<Track.Kind, RemoteTrackPublication>>,
+        isMuted: false,
+        isMy: false,
       };
       for (const [_rkey, rvalue] of value.trackPublications) {
         item.traks[rvalue.kind] = rvalue;
+        if (rvalue.kind === Track.Kind.Audio) {
+          item.isMuted = rvalue.isMuted;
+        }
       }
       arr.push(item);
     }
     setUserList(arr);
-    if (!mainUser) {
+    if (!mainUser && arr.length) {
       setMainUser(arr[0]);
     }
   };
-  // 监听流
+
+  // 监听
   const startListen = () => {
+    if (!room.current) return;
     room.current?.on(
       RoomEvent.TrackSubscribed,
       (
@@ -130,10 +160,71 @@ export const useLiveKit = () => {
         getParticipants();
       }
     );
+    room.current.on(RoomEvent.Connected, () => {
+      console.log("连接成功");
+      getParticipants();
+      setRoomInfo(room.current);
+    });
+
+    room.current.on(RoomEvent.TrackMuted, () => {
+      getParticipants();
+    });
+
+    room.current.on(RoomEvent.TrackUnmuted, () => {
+      getParticipants();
+    });
+
+    room.current.on(RoomEvent.LocalTrackPublished, () => {
+      getParticipants();
+    });
+
+    room.current.on(RoomEvent.LocalTrackUnpublished, () => {
+      getParticipants();
+    });
   };
 
+  // 静音
+  const mutedLocalHandler = (isMuted: boolean) => {
+    if (audioTrack.current) {
+      if (isMuted) {
+        audioTrack.current.mute();
+      } else {
+        audioTrack.current.unmute();
+      }
+    }
+  };
+
+  // 关闭视频
+  const closeVideo = async () => {
+    if (!cameraTrack.current) return;
+    cameraTrack.current.stop();
+    await room.current?.localParticipant.unpublishTrack(cameraTrack.current);
+  };
+
+  // 更换摄像头
+  const setCamera = async (deviceId: string) => {
+    if (!cameraTrack.current) return;
+    cameraTrack.current.setDeviceId(deviceId);
+  };
+
+  // 更换麦克风
+  const setMic = async (deviceId: string) => {
+    if (!audioTrack.current) return;
+    audioTrack.current.setDeviceId(deviceId);
+  };
   return {
     room,
+    cameraTrack,
+    audioTrack,
+    roomInfo,
+    cameraList,
+    micList,
+    currentCamera,
+    currentMic,
+    userList,
+    mainUser,
+
+    // action
     connect,
     disconnect,
     getVideoDevices,
@@ -141,17 +232,13 @@ export const useLiveKit = () => {
     createCameraTrack,
     createAudioTrack,
     publishTrack,
-    cameraTrack,
-    audioTrack,
-    startListen,
-    roomInfo,
-    cameraList,
-    micList,
-    currentCamera,
-    currentMic,
+    mutedLocalHandler,
+    setCamera,
+    setMic,
+    closeVideo,
+    setMainUser,
     setCurrentCamera,
     setCurrentMic,
-    userList,
-    mainUser,
+    startListen,
   };
 };

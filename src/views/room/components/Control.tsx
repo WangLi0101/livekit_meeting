@@ -9,16 +9,21 @@ import {
 // import clsx from "clsx";
 import React, { useContext } from "react";
 import { LivekitContext } from "./LivekitContext";
+import { Button } from "@/components/ui/button";
 
 export const Control: React.FC = () => {
   const { livekit } = useContext(LivekitContext);
+  const { mutedLocalHandler, setCamera, setMic, closeVideo } = livekit;
+  const mutedHandler = () => {
+    mutedLocalHandler(true);
+  };
   return (
     <div className="px-4 flex items-cente gap-4">
       <div className="video">
         <Select
           value={livekit.currentCamera}
           onValueChange={(value) => {
-            livekit.setCurrentCamera(value);
+            setCamera(value);
           }}
         >
           <SelectTrigger className="w-[180px] bg-white dark:bg-gray-800">
@@ -37,7 +42,7 @@ export const Control: React.FC = () => {
         <Select
           value={livekit.currentMic}
           onValueChange={(value) => {
-            livekit.setCurrentMic(value);
+            setMic(value);
           }}
         >
           <SelectTrigger className="w-[180px] bg-white dark:bg-gray-800">
@@ -71,6 +76,8 @@ export const Control: React.FC = () => {
           />
         </div>
       </div> */}
+      <Button onClick={mutedHandler}>静音</Button>
+      <Button onClick={closeVideo}>关闭视频</Button>
     </div>
   );
 };
