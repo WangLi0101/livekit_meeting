@@ -8,8 +8,8 @@ export const UserList: React.FC = () => {
   const { userList, mutedRemoteHandler } = livekit;
   return (
     <div className="h-full flex flex-col">
-      <div className="title">
-        <h3 className="text-xl font-bold">Participant</h3>
+      <div className="title p-4 border-b">
+        <h3 className="text-xl font-semibold">Participant</h3>
       </div>
       <div className="list flex-1 mt-4 space-y-4 overflow-auto">
         {userList.map((item, index) => (

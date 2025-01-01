@@ -8,7 +8,7 @@ export const Avatar: React.FC<Props> = ({ children, className }) => {
   return (
     <div
       className={cn(
-        "w-8 h-8 rounded-full bg-emerald-50 flex items-center justify-center",
+        "w-8 h-8 rounded-full bg-[#219781] font-bold text-white flex items-center justify-center",
         className
       )}
     >

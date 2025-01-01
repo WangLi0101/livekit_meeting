@@ -26,7 +26,7 @@ export const MainVideo: React.FC = () => {
       mainUser.traks.camera.track?.attach(video);
     }
 
-    if (audio && mainUser.traks?.microphone) {
+    if (audio && mainUser.traks?.microphone && !mainUser.isMy) {
       mainUser.traks.microphone.track?.attach(audio);
     }
 
@@ -36,18 +36,20 @@ export const MainVideo: React.FC = () => {
   }, [mainUser]);
 
   return (
-    <div className="w-full h-full border-2 border-[#4a9582] rounded-lg relative">
+    <div className="w-full h-full border-[3px] border-[#4a9582] rounded-lg relative overflow-hidden">
       {mainUser?.traks.camera || mainUser?.traks.screen_share ? (
         <div className="video h-full">
-          <video
-            id="main_video"
-            className={clsx("right-0 top-0 bg-black", {
-              absolute: mainUser?.traks.screen_share,
-              "w-1/3 h-1/3": mainUser?.traks.screen_share,
-              "w-full h-full": !mainUser?.traks.screen_share,
-              relative: !mainUser?.traks.screen_share,
-            })}
-          />
+          {mainUser.traks.camera && (
+            <video
+              id="main_video"
+              className={clsx("right-0 top-0 bg-black", {
+                absolute: mainUser?.traks.screen_share,
+                "w-1/3 h-1/3": mainUser?.traks.screen_share,
+                "w-full h-full": !mainUser?.traks.screen_share,
+                relative: !mainUser?.traks.screen_share,
+              })}
+            />
+          )}
           <video id="main_screen" className="w-full h-full bg-black"></video>
         </div>
       ) : (

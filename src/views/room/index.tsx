@@ -7,6 +7,7 @@ import { livekit_url } from "@/api/config";
 
 import { LivekitContext } from "./components/LivekitContext";
 import { MainVideo } from "./components/MainVideo";
+import { Message } from "./components/Message";
 
 const Room: React.FC = () => {
   const livekit = useLiveKit();
@@ -41,7 +42,7 @@ const Room: React.FC = () => {
   return (
     <LivekitContext.Provider value={{ livekit }}>
       <div className="room flex p-2 h-screen bg-[#e6e9ec]">
-        <div className="left flex-1 h-full flex flex-col gap-4 bg-white p-4 rounded-md">
+        <div className="left flex-1 h-full flex flex-col gap-4 bg-white p-4 rounded-[20px]">
           <h2 className="title text-2xl font-bold flex-shrink-0">
             roomNumber:{livekit.roomInfo?.name}
           </h2>
@@ -51,13 +52,16 @@ const Room: React.FC = () => {
           <div className="list  px-9 flex-shrink-0">
             <VideoList />
           </div>
-          <div className="control flex-shrink-0">
+          <div className="control flex-shrink-0 mt-4">
             <Control />
           </div>
         </div>
         <div className="right w-[25%] flex-shrink-0 ml-7 flex flex-col gap-4 h-full">
-          <div className="top h-full bg-white p-4 rounded-md">
+          <div className="top h-[50%] bg-white p-4 rounded-[20px]">
             <UserList />
+          </div>
+          <div className="message h-[50%] bg-white p-4 rounded-[20px]">
+            <Message />
           </div>
         </div>
       </div>

@@ -27,7 +27,7 @@ export const VideoItem: React.FC<Props> = ({ item }) => {
       item.traks.camera.track?.attach(video);
     }
 
-    if (audio && item.traks?.microphone) {
+    if (audio && item.traks?.microphone && !item.isMy) {
       item.traks.microphone.track?.attach(audio);
     }
   }, [item]);

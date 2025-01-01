@@ -4,8 +4,8 @@ interface Props {
 }
 export const UserName: React.FC<Props> = ({ children }) => {
   return (
-    <div className="bg-[#ecf4f2] px-3 py-1 rounded-lg">
-      <span className="text-[#5d9383] text-sm font-medium">{children}</span>
+    <div className="bg-[#e9f5f3] px-3 py-1 rounded-lg">
+      <span className="text-[#20947f] text-sm font-medium">{children}</span>
     </div>
   );
 };

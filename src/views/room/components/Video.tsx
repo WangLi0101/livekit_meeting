@@ -16,7 +16,7 @@ export const Video: React.FC<Props> = ({
   return (
     <div
       className={clsx(
-        "w-8 h-8 rounded-full flex items-center justify-center cursor-pointer",
+        "w-[40px] h-[40px] p-3 rounded-full flex items-center justify-center cursor-pointer",
         {
           "!bg-[#fbeced]": isClose,
           "!bg-[#eaf4f2]": !isClose,

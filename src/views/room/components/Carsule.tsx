@@ -28,7 +28,7 @@ export const VideoList: React.FC = () => {
           {userList.map((item) => (
             <CarouselItem
               key={item.name}
-              className="basis-1/3 h-[170px] cursor-pointer"
+              className="basis-1/3 aspect-[4/3] cursor-pointer md:basis-1/4 "
               onClick={() => setCurrentUser(item)}
             >
               <VideoItem item={item} />

@@ -22,6 +22,12 @@ export interface User {
   isMuted: boolean;
   isMy: boolean;
 }
+export interface Message {
+  sender: string;
+  content: string;
+  timestamp: Date;
+  isSelf?: boolean;
+}
 export const useLiveKit = () => {
   const room = useRef<Room>();
   const [cameraList, setCameraList] = useState<MediaDeviceInfo[]>([]);
@@ -32,6 +38,7 @@ export const useLiveKit = () => {
   const [userList, setUserList] = useImmer<User[]>([]);
   const [mainUser, setMainUser] = useState<User>();
   const [my, setMy] = useState<User>();
+  const [messages, setMessages] = useImmer<Message[]>([]);
   useEffect(() => {
     room.current = new Room();
   }, []);
@@ -128,7 +135,7 @@ export const useLiveKit = () => {
     const myItem: User = {
       name: myName,
       traks: {} as Partial<Record<Track.Source, RemoteTrackPublication>>,
-      isMuted: false,
+      isMuted: true,
       isMy: true,
     };
     for (const [_rkey, rvalue] of localParticipant) {
@@ -146,7 +153,7 @@ export const useLiveKit = () => {
       const item: User = {
         name: key,
         traks: {} as Partial<Record<Track.Kind, RemoteTrackPublication>>,
-        isMuted: false,
+        isMuted: true,
         isMy: false,
       };
       for (const [_rkey, rvalue] of value.trackPublications) {
@@ -184,14 +191,6 @@ export const useLiveKit = () => {
       setRoomInfo(room.current);
     });
 
-    room.current.on(RoomEvent.TrackMuted, () => {
-      getParticipants();
-    });
-
-    room.current.on(RoomEvent.TrackUnmuted, () => {
-      getParticipants();
-    });
-
     room.current.on(RoomEvent.LocalTrackPublished, () => {
       getParticipants();
     });
@@ -203,16 +202,37 @@ export const useLiveKit = () => {
     room.current.on(RoomEvent.TrackUnpublished, () => {
       getParticipants();
     });
+
+    // 接收消息
+    room.current.on(
+      RoomEvent.DataReceived,
+      (payload: Uint8Array, participant) => {
+        const decoder = new TextDecoder();
+        const strData = JSON.parse(decoder.decode(payload));
+        console.log("strData", strData, participant);
+        setMessages((draft) => {
+          draft.push({
+            sender: participant!.identity,
+            content: strData.message,
+            timestamp: strData.timestamp,
+            isSelf: participant!.identity === my?.name,
+          });
+        });
+      }
+    );
   };
 
   // 声音控制(自己)
   const mutedLocalHandler = (isMuted: boolean) => {
-    if (audioTrack.current) {
-      if (isMuted) {
-        audioTrack.current.mute();
-      } else {
-        audioTrack.current.unmute();
-      }
+    if (!room.current) return;
+
+    if (isMuted) {
+      if (!audioTrack.current) return;
+      audioTrack.current.stop();
+      room.current.localParticipant.unpublishTrack(audioTrack.current);
+      audioTrack.current = void 0;
+    } else {
+      createAudioTrack(currentMic);
     }
   };
 
@@ -224,10 +244,10 @@ export const useLiveKit = () => {
         return;
       }
       if (isMuted) {
-        user.traks.microphone.handleMuted();
+        (user.traks.microphone as RemoteTrackPublication).setSubscribed(false);
         user.isMuted = true;
       } else {
-        user.traks.microphone.handleUnmuted();
+        (user.traks.microphone as RemoteTrackPublication).setSubscribed(true);
         user.isMuted = false;
       }
     });
@@ -246,20 +266,32 @@ export const useLiveKit = () => {
     await room.current?.localParticipant.unpublishTrack(screenTrack.current);
     screenTrack.current = void 0;
   };
-  // 更换摄像头
-  const setCamera = async (deviceId: string) => {
-    if (!cameraTrack.current) return;
-    cameraTrack.current.setDeviceId(deviceId);
-    setCurrentCamera(deviceId);
+
+  // 更换设别
+  const setDevice = async (deviceId: string, kind: MediaDeviceKind) => {
+    if (!room.current) return;
+    room.current.switchActiveDevice(kind, deviceId);
   };
 
-  // 更换麦克风
-  const setMic = async (deviceId: string) => {
-    if (!audioTrack.current) return;
-    audioTrack.current.setDeviceId(deviceId);
-    setCurrentMic(deviceId);
+  // 发送消息
+  const sendMessag = async (message: string) => {
+    if (!room.current) return;
+    const encoder = new TextEncoder();
+    const data = encoder.encode(
+      JSON.stringify({ message, timestamp: new Date() })
+    );
+    await room.current.localParticipant.publishData(data, {
+      reliable: true,
+    });
+    setMessages((draft) => {
+      draft.push({
+        sender: my?.name || "",
+        content: message,
+        timestamp: new Date(),
+        isSelf: true,
+      });
+    });
   };
-
   return {
     room,
     cameraTrack,
@@ -272,6 +304,7 @@ export const useLiveKit = () => {
     userList,
     mainUser,
     my,
+    messages,
     // action
     connect,
     disconnect,
@@ -281,8 +314,6 @@ export const useLiveKit = () => {
     createAudioTrack,
     publishTrack,
     mutedLocalHandler,
-    setCamera,
-    setMic,
     closeVideo,
     setMainUser,
     setCurrentCamera,
@@ -291,5 +322,7 @@ export const useLiveKit = () => {
     mutedRemoteHandler,
     createScreenTrack,
     closeScreen,
+    setDevice,
+    sendMessag,
   };
 };

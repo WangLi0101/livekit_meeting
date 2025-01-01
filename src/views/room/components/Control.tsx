@@ -16,8 +16,7 @@ export const Control: React.FC = () => {
   const { livekit } = useContext(LivekitContext);
   const {
     mutedLocalHandler,
-    setCamera,
-    setMic,
+    setDevice,
     closeVideo,
     createCameraTrack,
     createScreenTrack,
@@ -50,7 +49,7 @@ export const Control: React.FC = () => {
         <Select
           value={livekit.currentCamera}
           onValueChange={(value) => {
-            setCamera(value);
+            setDevice(value, "videoinput");
           }}
         >
           <SelectTrigger className="w-[180px] bg-white dark:bg-gray-800">
@@ -70,7 +69,7 @@ export const Control: React.FC = () => {
         <Select
           value={livekit.currentMic}
           onValueChange={(value) => {
-            setMic(value);
+            setDevice(value, "audioinput");
           }}
         >
           <SelectTrigger className="w-[180px] bg-white dark:bg-gray-800">

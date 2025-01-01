@@ -16,7 +16,7 @@ export const Voice: React.FC<Props> = ({
   return (
     <div
       className={clsx(
-        "w-8 h-8 rounded-full flex items-center justify-center cursor-pointer",
+        "w-[40px] h-[40px] p-3 rounded-full flex items-center justify-center cursor-pointer",
         {
           "!bg-[#fbeced]": isMuted,
           "!bg-[#eaf4f2]": !isMuted,
@@ -28,7 +28,7 @@ export const Voice: React.FC<Props> = ({
     >
       <Icon
         icon={isMuted ? "streamline:voice-mail-off-solid" : "mdi:microphone"}
-        fontSize={isMuted ? 16 : 24}
+        fontSize={isMuted ? 16 : 16}
         className={clsx({
           "text-[#ea453a]": isMuted,
           "text-[#4a9582]": !isMuted,
