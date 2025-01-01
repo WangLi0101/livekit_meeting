@@ -25,7 +25,7 @@ export const Message: React.FC = () => {
       </div>
 
       {/* 消息列表 */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-4" ref={listRef}>
+      <div className="flex-1 overflow-y-auto p-4 space-y-4 " ref={listRef}>
         {messages.map((message, index) => (
           <div
             key={index}
