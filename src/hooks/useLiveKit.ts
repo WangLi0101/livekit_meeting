@@ -28,6 +28,10 @@ export interface Message {
   timestamp: Date;
   isSelf?: boolean;
 }
+
+const decoder = new TextDecoder();
+const encoder = new TextEncoder();
+
 export const useLiveKit = () => {
   const room = useRef<Room>();
   const [cameraList, setCameraList] = useState<MediaDeviceInfo[]>([]);
@@ -207,7 +211,6 @@ export const useLiveKit = () => {
     room.current.on(
       RoomEvent.DataReceived,
       (payload: Uint8Array, participant) => {
-        const decoder = new TextDecoder();
         const strData = JSON.parse(decoder.decode(payload));
         console.log("strData", strData, participant);
         setMessages((draft) => {
@@ -276,7 +279,6 @@ export const useLiveKit = () => {
   // 发送消息
   const sendMessag = async (message: string) => {
     if (!room.current) return;
-    const encoder = new TextEncoder();
     const data = encoder.encode(
       JSON.stringify({ message, timestamp: new Date() })
     );
