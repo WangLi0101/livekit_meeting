@@ -9,7 +9,10 @@ export const UserList: React.FC = () => {
   return (
     <div className="h-full flex flex-col">
       <div className="title p-2 border-b">
-        <h3 className="text-xl font-semibold">Participant</h3>
+        <h3 className="text-xl font-semibold">
+          <span>Participant</span>
+          <span className="text-[#969696]">（{userList.length}）</span>
+        </h3>
       </div>
       <div className="list flex-1 mt-4 space-y-4 overflow-auto">
         {userList.map((item, index) => (
