@@ -30,6 +30,10 @@ export const VideoItem: React.FC<Props> = ({ item }) => {
     if (audio && item.traks?.microphone && !item.isMy) {
       item.traks.microphone.track?.attach(audio);
     }
+    return () => {
+      item.traks?.camera?.track?.detach(video);
+      item.traks?.microphone?.track?.detach(audio);
+    };
   }, [item]);
   return (
     <div className="w-full h-full border-2 border-[#4a9582] rounded-[20px] relative overflow-hidden">
