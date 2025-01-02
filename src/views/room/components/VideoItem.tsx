@@ -43,9 +43,7 @@ export const VideoItem: React.FC<Props> = ({ item }) => {
         </div>
       ) : (
         <div className="flex items-center justify-center h-full">
-          <Avatar className="w-[60px] h-[60px]">
-            {item.name?.slice(0, 1)}
-          </Avatar>
+          <Avatar className="w-[60px] h-[60px]">{item.name?.charAt(0)}</Avatar>
         </div>
       )}
       <audio id={`${item.name}_audio`} className="hidden" />

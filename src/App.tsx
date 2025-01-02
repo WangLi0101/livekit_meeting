@@ -5,7 +5,7 @@ import { Toaster } from "@/components/ui/sonner";
 function App() {
   return (
     <div>
-      <Toaster />
+      <Toaster position="top-right" />
       <BrowserRouter>
         <Router />
       </BrowserRouter>
