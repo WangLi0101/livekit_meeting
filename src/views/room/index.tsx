@@ -69,13 +69,20 @@ const Room: React.FC = () => {
           </ResizablePanel>
           <ResizableHandle withHandle className="mx-4" />
           <ResizablePanel defaultSize={25}>
-            <div className="right flex flex-col gap-4 h-full">
-              <div className="top h-[50%] bg-white p-4 rounded-[20px]">
-                <UserList />
-              </div>
-              <div className="message h-[50%] bg-white p-4 rounded-[20px]">
-                <Message />
-              </div>
+            <div className="right h-full">
+              <ResizablePanelGroup direction="vertical">
+                <ResizablePanel defaultSize={50}>
+                  <div className="bg-white p-4 rounded-[20px] h-full">
+                    <UserList />
+                  </div>
+                </ResizablePanel>
+                <ResizableHandle withHandle className="my-4" />
+                <ResizablePanel defaultSize={50}>
+                  <div className=" bg-white p-4 rounded-[20px] h-full">
+                    <Message />
+                  </div>
+                </ResizablePanel>
+              </ResizablePanelGroup>
             </div>
           </ResizablePanel>
         </ResizablePanelGroup>
