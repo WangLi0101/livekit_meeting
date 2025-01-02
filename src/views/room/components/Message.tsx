@@ -20,7 +20,7 @@ export const Message: React.FC = () => {
 
   return (
     <div className="h-full flex flex-col bg-white">
-      <div className="title p-4 border-b">
+      <div className="title p-2 border-b">
         <h3 className="text-xl font-semibold">Message</h3>
       </div>
 

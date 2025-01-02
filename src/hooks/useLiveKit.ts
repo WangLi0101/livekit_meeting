@@ -27,7 +27,7 @@ export interface Message {
   sender: string;
   content: string;
   timestamp: Date;
-  isSelf?: boolean;
+  isSelf: boolean;
 }
 
 const decoder = new TextDecoder();
@@ -118,6 +118,7 @@ export const useLiveKit = () => {
   ) => {
     await room.current?.localParticipant.publishTrack(track);
   };
+
   // 获取所有参与者
   const getParticipants = () => {
     if (!room.current) return;
