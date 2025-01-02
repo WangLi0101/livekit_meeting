@@ -50,7 +50,7 @@ export const Message: React.FC = () => {
                   </div>
                 )}
                 <div
-                  className={`px-3 py-2 rounded-2xl ${
+                  className={`px-3 py-1 rounded-xl text-sm ${
                     message.isSelf
                       ? "bg-[#219781] text-white"
                       : "bg-gray-100 text-gray-800"
