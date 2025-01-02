@@ -34,19 +34,16 @@
 git clone [项目地址]
 
 # 安装依赖
-npm install
-# 或
-yarn install
+pnpm install
 
 # 启动开发服务器
-npm run dev
-# 或
-yarn dev
+pnpm run dev
 ```
 
-### 环境变量配置
+### 后端
 
-创建 `.env` 文件：
+1. 需要克隆另一个项目 地址: <https://github.com/WangLi0101/nest_template>，主要作用 调用接口换取livekit token ，也可以自己写一个接口换取
+2. 本地启动livekit服务 地址：<https://livekit.io>
 
 ## 项目结构
 

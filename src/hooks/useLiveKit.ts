@@ -60,22 +60,30 @@ export const useLiveKit = () => {
 
   // 获取所有摄像头设备
   async function getVideoDevices() {
-    const videoDevices = await Room.getLocalDevices("videoinput");
-    setCameraList(videoDevices);
-    if (videoDevices.length > 0) {
-      setCurrentCamera(videoDevices[0].deviceId);
-    } else {
+    try {
+      const videoDevices = await Room.getLocalDevices("videoinput");
+      setCameraList(videoDevices);
+      if (videoDevices.length > 0) {
+        setCurrentCamera(videoDevices[0].deviceId);
+      } else {
+        toast.error("no video device");
+      }
+    } catch {
       toast.error("no video device");
     }
   }
 
   // 获取所有音频设别
   async function getAudioDevices() {
-    const audioDevices = await Room.getLocalDevices("audioinput");
-    setMicList(audioDevices);
-    if (audioDevices.length > 0) {
-      setCurrentMic(audioDevices[0].deviceId);
-    } else {
+    try {
+      const audioDevices = await Room.getLocalDevices("audioinput");
+      setMicList(audioDevices);
+      if (audioDevices.length > 0) {
+        setCurrentMic(audioDevices[0].deviceId);
+      } else {
+        toast.error("no audio device");
+      }
+    } catch {
       toast.error("no audio device");
     }
   }
