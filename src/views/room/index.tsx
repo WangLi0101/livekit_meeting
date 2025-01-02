@@ -53,7 +53,7 @@ const Room: React.FC = () => {
         >
           <ResizablePanel defaultSize={75}>
             <div className="left h-full flex flex-col  bg-white p-4 rounded-[20px]">
-              <h2 className="title text-[18px] leading-none font-bold flex-shrink-0 bg-[rgb(73,149,130)] py-2 px-6 rounded-[10px] w-fit text-white">
+              <h2 className="title text-[18px] leading-none font-bold flex-shrink-0 bg-[#219781] py-2 px-6 rounded-[10px] w-fit text-white">
                 Room:{livekit.roomInfo?.name}
               </h2>
               <div className="video-content mt-4 flex-1 overflow-hidden mb-4">
