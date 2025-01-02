@@ -11,10 +11,7 @@ export const MainVideo: React.FC = () => {
   const { mainUser } = livekit;
   useEffect(() => {
     if (!mainUser) return;
-
     const video = document.getElementById("main_video") as HTMLVideoElement;
-
-    const audio = document.getElementById("main_audio") as HTMLAudioElement;
     const screen = document.getElementById("main_screen") as HTMLVideoElement;
 
     if (video && mainUser.traks?.camera) {
@@ -24,10 +21,6 @@ export const MainVideo: React.FC = () => {
         );
       }
       mainUser.traks.camera.track?.attach(video);
-    }
-
-    if (audio && mainUser.traks?.microphone && !mainUser.isMy) {
-      mainUser.traks.microphone.track?.attach(audio);
     }
 
     if (screen && mainUser.traks?.screen_share) {
@@ -59,7 +52,6 @@ export const MainVideo: React.FC = () => {
           </Avatar>
         </div>
       )}
-      <audio id="main_audio" className="hidden" />
       <div className="operator w-full flex justify-between items-center absolute bottom-0 left-0 p-4">
         <UserName>{mainUser?.name}</UserName>
         <div className="voice">

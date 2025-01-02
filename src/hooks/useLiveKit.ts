@@ -172,7 +172,7 @@ export const useLiveKit = () => {
         setMainUser(user);
       }
     }
-  }, [userList]);
+  }, [userList, mainUser]);
 
   // 监听
   const startListen = () => {
@@ -195,6 +195,10 @@ export const useLiveKit = () => {
     });
 
     room.current.on(RoomEvent.TrackUnpublished, () => {
+      getParticipants();
+    });
+
+    room.current.on(RoomEvent.ActiveDeviceChanged, () => {
       getParticipants();
     });
 

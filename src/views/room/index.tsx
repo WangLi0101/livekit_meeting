@@ -46,7 +46,7 @@ const Room: React.FC = () => {
   }, []);
   return (
     <LivekitContext.Provider value={{ livekit }}>
-      <div className="room h-screen bg-[#f8f8fa] p-4">
+      <div className="room h-screen bg-[#f2f3f5] p-4">
         <ResizablePanelGroup
           direction="horizontal"
           className="h-full rounded-lg"
