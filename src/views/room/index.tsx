@@ -46,15 +46,15 @@ const Room: React.FC = () => {
   }, []);
   return (
     <LivekitContext.Provider value={{ livekit }}>
-      <div className="room h-screen bg-[#e6e9ec] p-4">
+      <div className="room h-screen bg-[#f8f8fa] p-4">
         <ResizablePanelGroup
           direction="horizontal"
-          className="h-full rounded-lg border"
+          className="h-full rounded-lg"
         >
           <ResizablePanel defaultSize={75}>
             <div className="left h-full flex flex-col  bg-white p-4 rounded-[20px]">
-              <h2 className="title text-2xl font-bold flex-shrink-0 ">
-                roomNumber:{livekit.roomInfo?.name}
+              <h2 className="title text-[18px] leading-none font-bold flex-shrink-0 bg-[rgb(73,149,130)] py-2 px-6 rounded-[10px] w-fit text-white">
+                Room:{livekit.roomInfo?.name}
               </h2>
               <div className="video-content mt-4 flex-1 overflow-hidden mb-4">
                 <MainVideo />

@@ -36,7 +36,7 @@ export const MainVideo: React.FC = () => {
   }, [mainUser]);
 
   return (
-    <div className="w-full h-full border-[3px] border-[#4a9582] rounded-lg relative overflow-hidden">
+    <div className="w-full h-full border-[3px] border-[#4a9582] rounded-[30px] relative overflow-hidden">
       {mainUser?.traks.camera || mainUser?.traks.screen_share ? (
         <div className="video h-full">
           {mainUser.traks.camera && (

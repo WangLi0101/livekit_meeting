@@ -32,7 +32,7 @@ export const VideoItem: React.FC<Props> = ({ item }) => {
     }
   }, [item]);
   return (
-    <div className="w-full h-full border-2 border-[#4a9582] rounded-lg relative">
+    <div className="w-full h-full border-2 border-[#4a9582] rounded-[20px] relative overflow-hidden">
       {item.traks.camera ? (
         <div className="video h-full">
           <video id={`${item.name}_video`} className="w-full h-full bg-black" />
