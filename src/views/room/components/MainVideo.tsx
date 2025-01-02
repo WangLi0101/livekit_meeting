@@ -26,6 +26,10 @@ export const MainVideo: React.FC = () => {
     if (screen && mainUser.traks?.screen_share) {
       mainUser.traks.screen_share.track?.attach(screen);
     }
+    return () => {
+      mainUser.traks?.camera?.track?.detach(video);
+      mainUser.traks?.screen_share?.track?.detach(screen);
+    };
   }, [mainUser]);
 
   return (

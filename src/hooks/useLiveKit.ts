@@ -198,10 +198,6 @@ export const useLiveKit = () => {
       getParticipants();
     });
 
-    room.current.on(RoomEvent.ActiveDeviceChanged, () => {
-      getParticipants();
-    });
-
     // 接收消息
     room.current.on(
       RoomEvent.DataReceived,
