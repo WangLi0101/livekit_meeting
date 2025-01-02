@@ -14,6 +14,7 @@ import {
   Track,
 } from "livekit-client";
 import { useImmer } from "use-immer";
+import { toast } from "sonner";
 export interface User {
   name: string;
   traks: Partial<
@@ -59,34 +60,23 @@ export const useLiveKit = () => {
 
   // 获取所有摄像头设备
   async function getVideoDevices() {
-    try {
-      // 获取所有设备信息
-      const devices = await navigator.mediaDevices.enumerateDevices();
-
-      // 过滤出视频输入设备（摄像头）
-      const videoDevices = devices.filter(
-        (device) => device.kind === "videoinput" && device.deviceId
-      );
-      console.log("videoDevices", videoDevices);
-      setCameraList(videoDevices);
-      if (videoDevices.length > 0) {
-        setCurrentCamera(videoDevices[0].deviceId);
-      }
-    } catch (error) {
-      console.error("Error getting video devices:", error);
-      return [];
+    const videoDevices = await Room.getLocalDevices("videoinput");
+    setCameraList(videoDevices);
+    if (videoDevices.length > 0) {
+      setCurrentCamera(videoDevices[0].deviceId);
+    } else {
+      toast.error("no video device");
     }
   }
 
   // 获取所有音频设别
   async function getAudioDevices() {
-    const devices = await navigator.mediaDevices.enumerateDevices();
-    const audioDevices = devices.filter(
-      (device) => device.kind === "audioinput" && device.deviceId
-    );
+    const audioDevices = await Room.getLocalDevices("audioinput");
     setMicList(audioDevices);
     if (audioDevices.length > 0) {
       setCurrentMic(audioDevices[0].deviceId);
+    } else {
+      toast.error("no audio device");
     }
   }
 
@@ -273,7 +263,15 @@ export const useLiveKit = () => {
   // 更换设别
   const setDevice = async (deviceId: string, kind: MediaDeviceKind) => {
     if (!room.current) return;
-    room.current.switchActiveDevice(kind, deviceId);
+    await room.current.switchActiveDevice(kind, deviceId);
+    switch (kind) {
+      case "videoinput":
+        setCurrentCamera(deviceId);
+        break;
+      case "audioinput":
+        setCurrentMic(deviceId);
+        break;
+    }
   };
 
   // 发送消息

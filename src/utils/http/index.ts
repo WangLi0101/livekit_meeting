@@ -2,7 +2,7 @@ import type { service } from "./../../api/config";
 import { config } from "@/api/config";
 import { handleCode } from "./code";
 import { formatToken, getToken } from "../auth";
-
+import { toast } from "sonner";
 export type ResponseData<T> = {
   code: number;
   data: T;
@@ -54,6 +54,7 @@ export default async <T>(
     }
     return res;
   } catch (error) {
+    toast.error("服务繁忙");
     return Promise.reject(error);
   }
 };

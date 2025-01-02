@@ -8,6 +8,11 @@ import { livekit_url } from "@/api/config";
 import { LivekitContext } from "./components/LivekitContext";
 import { MainVideo } from "./components/MainVideo";
 import { Message } from "./components/Message";
+import {
+  ResizableHandle,
+  ResizablePanel,
+  ResizablePanelGroup,
+} from "@/components/ui/resizable";
 
 const Room: React.FC = () => {
   const livekit = useLiveKit();
@@ -41,29 +46,39 @@ const Room: React.FC = () => {
   }, []);
   return (
     <LivekitContext.Provider value={{ livekit }}>
-      <div className="room flex p-2 h-screen bg-[#e6e9ec]">
-        <div className="left flex-1 h-full flex flex-col gap-4 bg-white p-4 rounded-[20px]">
-          <h2 className="title text-2xl font-bold flex-shrink-0">
-            roomNumber:{livekit.roomInfo?.name}
-          </h2>
-          <div className="video-content mt-4 flex-1 overflow-hidden">
-            <MainVideo />
-          </div>
-          <div className="list  px-9 flex-shrink-0">
-            <VideoList />
-          </div>
-          <div className="control flex-shrink-0 mt-4">
-            <Control />
-          </div>
-        </div>
-        <div className="right w-[25%] flex-shrink-0 ml-7 flex flex-col gap-4 h-full">
-          <div className="top h-[50%] bg-white p-4 rounded-[20px]">
-            <UserList />
-          </div>
-          <div className="message h-[50%] bg-white p-4 rounded-[20px]">
-            <Message />
-          </div>
-        </div>
+      <div className="room h-screen bg-[#e6e9ec] p-4">
+        <ResizablePanelGroup
+          direction="horizontal"
+          className="h-full rounded-lg border"
+        >
+          <ResizablePanel defaultSize={75}>
+            <div className="left h-full flex flex-col  bg-white p-4 rounded-[20px]">
+              <h2 className="title text-2xl font-bold flex-shrink-0 ">
+                roomNumber:{livekit.roomInfo?.name}
+              </h2>
+              <div className="video-content mt-4 flex-1 overflow-hidden mb-4">
+                <MainVideo />
+              </div>
+              <div className="list px-[45px] flex-shrink-0 mb-6">
+                <VideoList />
+              </div>
+              <div className="control flex-shrink-0">
+                <Control />
+              </div>
+            </div>
+          </ResizablePanel>
+          <ResizableHandle withHandle className="mx-4" />
+          <ResizablePanel defaultSize={25}>
+            <div className="right flex flex-col gap-4 h-full">
+              <div className="top h-[50%] bg-white p-4 rounded-[20px]">
+                <UserList />
+              </div>
+              <div className="message h-[50%] bg-white p-4 rounded-[20px]">
+                <Message />
+              </div>
+            </div>
+          </ResizablePanel>
+        </ResizablePanelGroup>
       </div>
     </LivekitContext.Provider>
   );
