@@ -19,14 +19,16 @@ const prod_server: service = {
 };
 
 let config: service;
-const livekit_url = "ws://localhost:7880";
+let livekit_url = "ws://localhost:7880";
 
 switch (import.meta.env.MODE) {
   case "development":
     config = dev_service;
+    livekit_url = "wss://wangli-bkzhjkbc.livekit.cloud";
     break;
   case "production":
     config = prod_server;
+    livekit_url = "wss://wangli-bkzhjkbc.livekit.cloud";
     break;
   default:
     break;
