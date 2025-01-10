@@ -12,7 +12,7 @@ const dev_service: service = {
 };
 
 // 生产环境
-const prod_url = "http://47.120.58.223:3000";
+const prod_url = "https://sys-api.betterme.cyou";
 const prod_server: service = {
   MOCK: `/mock`,
   MANGMENT: `${prod_url}/api/v1`,
