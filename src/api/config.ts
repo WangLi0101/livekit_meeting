@@ -12,21 +12,23 @@ const dev_service: service = {
 };
 
 // 生产环境
-const prod_url = "http://47.120.58.223:3000";
+const prod_url = "https://sys-api.betterme.cyou";
 const prod_server: service = {
   MOCK: `/mock`,
   MANGMENT: `${prod_url}/api/v1`,
 };
 
 let config: service;
-const livekit_url = "ws://localhost:7880";
+let livekit_url = "ws://localhost:7880";
 
 switch (import.meta.env.MODE) {
   case "development":
     config = dev_service;
+    livekit_url = "wss://wangli-bkzhjkbc.livekit.cloud";
     break;
   case "production":
     config = prod_server;
+    livekit_url = "wss://wangli-bkzhjkbc.livekit.cloud";
     break;
   default:
     break;
