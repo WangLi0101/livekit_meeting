@@ -16,6 +16,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { getSign } from "@/api/stsytem";
 import { useNavigate } from "react-router-dom";
+import { Footer } from "@/components/footer";
 
 const LoginSchema = z.object({
   username: z.string().min(1, { message: "Username is required" }),
@@ -85,6 +86,7 @@ const Login: React.FC = () => {
           </Form>
         </CardContent>
       </Card>
+      <Footer />
     </div>
   );
 };
