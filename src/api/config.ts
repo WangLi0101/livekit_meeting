@@ -24,7 +24,7 @@ let livekit_url = "ws://localhost:7880";
 switch (import.meta.env.MODE) {
   case "development":
     config = dev_service;
-    livekit_url = "wss://wangli-bkzhjkbc.livekit.cloud";
+    // livekit_url = "wss://wangli-bkzhjkbc.livekit.cloud";
     break;
   case "production":
     config = prod_server;
